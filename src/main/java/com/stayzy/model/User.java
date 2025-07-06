@@ -17,8 +17,9 @@ import java.util.*;
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
+    private UUID id;
 
     private String email;
     private String password;
@@ -27,6 +28,19 @@ public class User implements UserDetails {
 
     @Column(name = "phone")
     private String phone;
+
+    @Column(name = "role", nullable = false)
+    private String role = "USER";
+
+    @Lob
+    @Column(name = "interests", columnDefinition = "TEXT")
+    private String interests; // Store JSON as String, or use a converter for List<String>
+
+    @Column(name = "created_at", updatable = false)
+    private Date createdAt;
+
+    @Column(name = "updated_at")
+    private Date updatedAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Booking> bookings;
@@ -37,7 +51,7 @@ public class User implements UserDetails {
     // ✅ FIXED: Assign ROLE_USER for Spring Security
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role));
     }
 
     @Override
@@ -63,5 +77,16 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = new Date();
     }
 }

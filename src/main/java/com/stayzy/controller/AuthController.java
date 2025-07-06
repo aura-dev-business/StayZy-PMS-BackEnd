@@ -50,18 +50,21 @@ public class AuthController {
 
             Object principal = authentication.getPrincipal();
             String email;
+            String jwt;
 
             if (principal instanceof UserDetailsImpl userDetails) {
                 email = userDetails.getUser().getEmail();
+                // Use overloaded generateToken to include roles
+                jwt = jwtUtil.generateToken(userDetails);
             } else if (principal instanceof User user) {
                 email = user.getEmail();
+                jwt = jwtUtil.generateToken(email); // fallback, but won't include roles
             } else if (principal instanceof org.springframework.security.core.userdetails.User springUser) {
                 email = springUser.getUsername();
+                jwt = jwtUtil.generateToken(springUser);
             } else {
                 return ResponseEntity.status(500).body(Map.of("message", "Unexpected user type"));
             }
-
-            String jwt = jwtUtil.generateToken(email);
 
             ResponseCookie cookie = ResponseCookie.from("token", jwt)
                 .httpOnly(true)
@@ -151,4 +154,3 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 }
-    

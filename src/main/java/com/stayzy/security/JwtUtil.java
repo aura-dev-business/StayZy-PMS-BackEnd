@@ -3,9 +3,13 @@ package com.stayzy.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -20,6 +24,22 @@ public class JwtUtil {
     public String generateToken(String username) {
         return Jwts.builder()
                 .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expirationMs))
+                .signWith(key, Jwts.SIG.HS256)
+                .compact();
+    }
+
+    // Overloaded: Generate token with UserDetails and roles claim
+    public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", userDetails.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .toList());
+
+        return Jwts.builder()
+                .claims(claims)
+                .subject(userDetails.getUsername())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(key, Jwts.SIG.HS256)
