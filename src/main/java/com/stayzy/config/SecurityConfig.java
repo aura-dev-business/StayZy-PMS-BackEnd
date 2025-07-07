@@ -37,7 +37,7 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/api/auth/**").permitAll()
             .requestMatchers(HttpMethod.POST, "/api/properties").hasAuthority("ROLE_ADMIN") // Changed to hasAuthority
-            .requestMatchers(HttpMethod.GET, "/api/properties").permitAll()
+            .requestMatchers(HttpMethod.GET, "/api/properties","/api/properties/**").permitAll()
             .requestMatchers("/api/debug/**").hasAuthority("ROLE_ADMIN")
             .anyRequest().authenticated()
         )

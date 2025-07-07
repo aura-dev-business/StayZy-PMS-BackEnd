@@ -29,9 +29,11 @@ public class PropertyController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Property> getProperty(@PathVariable UUID id) {
+    public ResponseEntity<Property> getPropertyById(@PathVariable UUID id) {
+        System.out.println("Fetching property with ID: " + id);
         Optional<Property> property = propertyService.getPropertyById(id);
-        return property.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return property.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping
