@@ -1,6 +1,7 @@
 package com.stayzy.service;
 
 import com.stayzy.model.Property;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -10,5 +11,8 @@ public interface PropertyService {
     Optional<Property> getPropertyById(UUID id);
     List<Property> getAllProperties();
     void deleteProperty(UUID id);
-    // Add more methods as needed (e.g., search by city, price, etc.)
+    List<Property> findByCity(String city);
+    List<Property> findByPriceRange(BigDecimal min, BigDecimal max);
+    List<Property> findByPropertyType(String propertyType);
+    List<Property> searchProperties(String city, String propertyType, BigDecimal min, BigDecimal max);
 }
