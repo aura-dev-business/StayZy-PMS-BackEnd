@@ -6,6 +6,7 @@ import com.stayzy.model.User;
 import com.stayzy.repository.UserRepository;
 import com.stayzy.security.JwtUtil;
 import com.stayzy.security.UserDetailsImpl;
+
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -54,11 +55,10 @@ public class AuthController {
 
             if (principal instanceof UserDetailsImpl userDetails) {
                 email = userDetails.getUser().getEmail();
-                // Use overloaded generateToken to include roles
                 jwt = jwtUtil.generateToken(userDetails);
             } else if (principal instanceof User user) {
                 email = user.getEmail();
-                jwt = jwtUtil.generateToken(email); // fallback, but won't include roles
+                jwt = jwtUtil.generateToken(email);
             } else if (principal instanceof org.springframework.security.core.userdetails.User springUser) {
                 email = springUser.getUsername();
                 jwt = jwtUtil.generateToken(springUser);
@@ -68,9 +68,9 @@ public class AuthController {
 
             ResponseCookie cookie = ResponseCookie.from("token", jwt)
                 .httpOnly(true)
-                .secure(false) // Set to true in production
+                .secure(false)
                 .path("/")
-                .sameSite("Lax") // Use "None" and secure=true in production for cross-origin
+                .sameSite("Lax")
                 .maxAge(24 * 60 * 60)
                 .build();
 
@@ -127,7 +127,6 @@ public class AuthController {
             userInfo.put("email", user.getEmail());
             userInfo.put("username", user.getUsername());
             userInfo.put("totalBookings", user.getBookings().size());
-            userInfo.put("totalWishlist", user.getWishlist().size());
 
             return ResponseEntity.ok(userInfo);
         } catch (Exception e) {
@@ -147,8 +146,7 @@ public class AuthController {
             user.getFullName(),
             user.getEmail(),
             user.getUsername(),
-            user.getBookings().size(),
-            user.getWishlist().size()
+            user.getBookings().size()
         );
 
         return ResponseEntity.ok(response);

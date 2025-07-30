@@ -5,4 +5,7 @@ import com.stayzy.model.User;
 
 public interface UserService {
     UserResponse getUserProfile(User user);
+
+    // ✅ New method to fetch user by email
+    User findByEmail(String email);
 }

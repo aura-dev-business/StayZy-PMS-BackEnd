@@ -34,7 +34,7 @@ public class User implements UserDetails {
 
     @Lob
     @Column(name = "interests", columnDefinition = "TEXT")
-    private String interests; // Store JSON as String, or use a converter for List<String>
+    private String interests;
 
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
@@ -45,10 +45,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Booking> bookings;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Wishlist> wishlist;
-
-    // ✅ FIXED: Assign ROLE_USER for Spring Security
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.role));
@@ -56,7 +52,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email; // Use email for login
+        return email;
     }
 
     @Override
