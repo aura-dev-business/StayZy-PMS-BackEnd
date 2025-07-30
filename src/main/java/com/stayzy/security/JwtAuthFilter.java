@@ -62,7 +62,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private String extractTokenFromCookie(HttpServletRequest request) {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
-                if ("token".equals(cookie.getName())) { // ✅ Make sure this matches your login controller
+                System.out.println("[JwtAuthFilter] Cookie found: " + cookie.getName() + " = " + cookie.getValue());
+                if ("token".equals(cookie.getName())) {
+                    System.out.println("[JwtAuthFilter] JWT token extracted from cookie");
                     return cookie.getValue();
                 }
             }
