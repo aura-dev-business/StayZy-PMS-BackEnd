@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.util.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "properties")
@@ -11,6 +12,7 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class Property {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -45,10 +47,9 @@ public class Property {
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
 
-    @ElementCollection
-    @CollectionTable(name = "property_images", joinColumns = @JoinColumn(name = "property_id"))
-    @Column(name = "image_url")
-    private List<String> images = new ArrayList<>();
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<PropertyImage> images = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
