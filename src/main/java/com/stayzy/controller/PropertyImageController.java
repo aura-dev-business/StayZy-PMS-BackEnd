@@ -29,6 +29,7 @@ public class PropertyImageController {
             PropertyImage propertyImage = propertyImageService.uploadPropertyImage(propertyId, file);
             return ResponseEntity.ok(propertyImage);
         } catch (Exception e) {
+            e.printStackTrace(); // <-- Add this line to log the error
             return ResponseEntity.badRequest().build();
         }
     }
