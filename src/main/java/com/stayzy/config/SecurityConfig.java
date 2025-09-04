@@ -38,7 +38,7 @@ public class SecurityConfig {
                 ).permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 // 🔴 Removed: .requestMatchers("/api/wishlist/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/properties").hasAuthority("ROLE_ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/properties/").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/properties/**").permitAll()
                 .requestMatchers("/api/debug/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
