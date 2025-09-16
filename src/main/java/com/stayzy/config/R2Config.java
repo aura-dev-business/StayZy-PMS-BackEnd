@@ -10,32 +10,41 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
 import java.net.URI;
 
+
 @Configuration
 public class R2Config {
 
-	@Value("${cloudflare.r2.accountId}")
-	private String accountId;
+    @Value("${cloudflare.r2.accountId}")
+    private String accountId;
 
-	@Value("${cloudflare.r2.accessKey}")
-	private String accessKey;
+    @Value("${cloudflare.r2.accessKey}")
+    private String accessKey;
 
-	@Value("${cloudflare.r2.secretKey}")
-	private String secretKey;
+    @Value("${cloudflare.r2.secretKey}")
+    private String secretKey;
 
-	@Bean
-	public S3Client r2Client() {
-		if (accountId == null || accountId.isEmpty() || accountId.equals("YOUR_ACCOUNT_ID")) {
-			throw new IllegalArgumentException("Cloudflare R2 accountId is missing or not set. Please set cloudflare.r2.accountId in your application.properties or environment.");
-		}
-		String endpoint = "https://" + accountId + ".r2.cloudflarestorage.com/stayz-bucket" + //
-                        "";
-		return S3Client.builder()
-				.endpointOverride(URI.create(endpoint))
-				.region(Region.of("auto")) // R2 uses "auto"
-				.credentialsProvider(StaticCredentialsProvider.create(
-						AwsBasicCredentials.create(accessKey, secretKey)
-				))
-				.serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
-				.build();
-	}
+    @Value("${cloudflare.r2.bucketName}")
+    private String bucketName;
+
+    @Bean
+    public S3Client r2Client() {
+        String endpoint = "https://" + accountId + ".r2.cloudflarestorage.com";
+        
+        // Add debug logging
+        System.out.println("R2 Configuration:");
+        System.out.println("Account ID: " + accountId);
+        System.out.println("Access Key: " + accessKey.substring(0, 5) + "..."); // Show first 5 chars for security
+        System.out.println("Bucket Name: " + bucketName);
+        System.out.println("Endpoint: " + endpoint);
+        
+        return S3Client.builder()
+                .endpointOverride(URI.create(endpoint))
+                .region(Region.of("auto"))
+                .credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create(accessKey, secretKey)))
+                .serviceConfiguration(S3Configuration.builder()
+                        .pathStyleAccessEnabled(true)
+                        .build())
+                .build();
+    }
 }
