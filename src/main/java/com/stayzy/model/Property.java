@@ -5,7 +5,8 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.util.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "properties")
 @Data
